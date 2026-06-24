@@ -8,6 +8,7 @@ public class DeliveryApp {
 
     private static final Scanner scanner = new Scanner(System.in);
     private static List<Parcel> allParcels = new ArrayList<>();
+    private static List<Trackable> trackableParcels = new ArrayList<>();
 
     public static void main(String[] args) {
         boolean running = true;
@@ -31,11 +32,15 @@ public class DeliveryApp {
                 case 3:
                     calculateCosts();
                     break;
+                case 4:
+                    sendNotification();
+                    break;
                 case 0:
                     running = false;
+                    System.out.println("Завершение...");
                     break;
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println("Неверный выбор.\n");
             }
         }
     }
@@ -45,7 +50,9 @@ public class DeliveryApp {
         System.out.println("1 — Добавить посылку");
         System.out.println("2 — Отправить все посылки");
         System.out.println("3 — Посчитать стоимость доставки");
+        System.out.println("4 — Отправить SMS-оповещение");
         System.out.println("0 — Завершить");
+        System.out.print("Ваш выбор: ");
     }
 
     private static void addParcel() {
@@ -63,6 +70,7 @@ public class DeliveryApp {
                 break;
             case 2:
                 parcel = new FragileParcel(data.description, data.weight, data.deliveryAddress, data.sendDay);
+                trackableParcels.add((Trackable) parcel);
                 break;
             case 3:
                 System.out.print("Введите срок в днях, за который посылка не испортится: ");
@@ -73,7 +81,7 @@ public class DeliveryApp {
         }
 
         allParcels.add(parcel);
-        System.out.println("Посылка успешно добавлена!");
+        System.out.println("Посылка успешно добавлена!\n");
 
     }
 
@@ -132,7 +140,25 @@ public class DeliveryApp {
         for (Parcel parcel : allParcels) {
             totalCost += parcel.calculateDeliveryCost();
         }
-        System.out.println("Общая стоимость всех доставок равна: " + totalCost);
+        System.out.println("Общая стоимость всех доставок равна: " + totalCost + "\n.");
+    }
+
+    public static void sendNotification() {
+        if(trackableParcels.isEmpty()) {
+            System.out.println("В доставке нет посылок с услугой SMS-оповещения.\n");
+            return;
+        }
+
+        System.out.print("Введите новое местоположение посылки: ");
+        String newLocation = scanner.nextLine();
+        if (newLocation.isEmpty()) {
+            System.out.println("Ввод не должен быть пустым.\n");
+            return;
+        }
+
+        for (Trackable trackableParcel : trackableParcels) {
+            trackableParcel.reportStatus(newLocation);
+        }
     }
 
 }
