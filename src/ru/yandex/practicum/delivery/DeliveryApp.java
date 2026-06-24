@@ -13,7 +13,13 @@ public class DeliveryApp {
         boolean running = true;
         while (running) {
             showMenu();
-            int choice = Integer.parseInt(scanner.nextLine());
+            String input = scanner.nextLine();
+            if (input.isEmpty()) {
+                System.out.println("Ввод не должен быть пустым.");
+                return;
+            }
+
+            int choice = Integer.parseInt(input);
 
             switch (choice) {
                 case 1:
@@ -42,18 +48,91 @@ public class DeliveryApp {
         System.out.println("0 — Завершить");
     }
 
-    // реализуйте методы ниже
-
     private static void addParcel() {
-        // Подсказка: спросите тип посылки и необходимые поля, создайте объект и добавьте в allParcels
+        showAddParcelMenu();
+        int parcelType = readParcelType();
+        if (parcelType == -1) {
+            return;
+        }
+
+        Parcel parcel = null;
+        CommonParcelData data = readCommonParcelData();
+        switch (parcelType) {
+            case 1:
+                parcel = new StandardParcel(data.description, data.weight, data.deliveryAddress, data.sendDay);
+                break;
+            case 2:
+                parcel = new FragileParcel(data.description, data.weight, data.deliveryAddress, data.sendDay);
+                break;
+            case 3:
+                System.out.print("Введите срок в днях, за который посылка не испортится: ");
+                String inputTimeToLive = scanner.nextLine();
+                int timeToLive = Integer.parseInt(inputTimeToLive);
+                parcel = new PerishableParcel(data.description, data.weight, data.deliveryAddress, data.sendDay, timeToLive);
+                break;
+        }
+
+        allParcels.add(parcel);
+        System.out.println("Посылка успешно добавлена!");
+
+    }
+
+    private static void showAddParcelMenu() {
+        System.out.println("Выберите тип посылки:");
+        System.out.println("1 — Стандартная посылка");
+        System.out.println("2 — Хрупкая посылка");
+        System.out.println("3 — Скоропортящаяся посылка");
+    }
+
+    private static int readParcelType() {
+        String input = scanner.nextLine();
+        if (input.isEmpty()) {
+            System.out.println("Ввод не должен быть пустым.");
+            return -1;
+        }
+
+        int parcelType = Integer.parseInt(input);
+        if (parcelType < 1 || parcelType > 3) {
+            System.out.println("Неверный тип посылки.");
+            return -1;
+        }
+
+        return parcelType;
+    }
+
+    private static CommonParcelData readCommonParcelData() {
+        System.out.print("Введите описание посылки: ");
+        String description = scanner.nextLine();
+
+        System.out.print("Введите вес посылки: ");
+        String inputWeight = scanner.nextLine();
+        int weight = Integer.parseInt(inputWeight);
+
+        System.out.print("Введите адрес места назначения посылки: ");
+        String deliveryAddress = scanner.nextLine();
+
+        System.out.print("Введите день отправки: ");
+        String inputSendDay = scanner.nextLine();
+        int sendDay = Integer.parseInt(inputSendDay);
+
+        return new CommonParcelData(description, weight, deliveryAddress, sendDay);
     }
 
     private static void sendParcels() {
-        // Пройти по allParcels, вызвать packageItem() и deliver()
+        System.out.println("Начинаю отправку посылок...");
+        for (Parcel parcel : allParcels) {
+            parcel.packageItem();
+            parcel.deliver();
+        }
+        System.out.println("Все посылки оправлены!\n");
     }
 
     private static void calculateCosts() {
-        // Посчитать общую стоимость всех доставок и вывести на экран
+        int totalCost = 0;
+        for (Parcel parcel : allParcels) {
+            totalCost += parcel.calculateDeliveryCost();
+        }
+        System.out.println("Общая стоимость всех доставок равна: " + totalCost);
     }
 
 }
