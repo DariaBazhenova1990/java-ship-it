@@ -10,6 +10,11 @@ public class DeliveryApp {
     private static List<Parcel> allParcels = new ArrayList<>();
     private static List<Trackable> trackableParcels = new ArrayList<>();
 
+    private static ParcelBox<StandardParcel> standardParcelBox = new ParcelBox<>(10);
+    private static ParcelBox<FragileParcel> fragileParcelBox = new ParcelBox<>(5);
+    private static ParcelBox<PerishableParcel> perishableParcelBox = new ParcelBox<>(20);
+
+
     public static void main(String[] args) {
         boolean running = true;
         while (running) {
@@ -35,6 +40,9 @@ public class DeliveryApp {
                 case 4:
                     sendNotification();
                     break;
+                case 5:
+                    printBoxContent();
+                    break;
                 case 0:
                     running = false;
                     System.out.println("Завершение...");
@@ -51,6 +59,7 @@ public class DeliveryApp {
         System.out.println("2 — Отправить все посылки");
         System.out.println("3 — Посчитать стоимость доставки");
         System.out.println("4 — Отправить SMS-оповещение");
+        System.out.println("5 — Показать содержимое коробки");
         System.out.println("0 — Завершить");
         System.out.print("Ваш выбор: ");
     }
@@ -67,16 +76,19 @@ public class DeliveryApp {
         switch (parcelType) {
             case 1:
                 parcel = new StandardParcel(data.description, data.weight, data.deliveryAddress, data.sendDay);
+                standardParcelBox.addParcel((StandardParcel) parcel);
                 break;
             case 2:
                 parcel = new FragileParcel(data.description, data.weight, data.deliveryAddress, data.sendDay);
                 trackableParcels.add((Trackable) parcel);
+                fragileParcelBox.addParcel((FragileParcel) parcel);
                 break;
             case 3:
                 System.out.print("Введите срок в днях, за который посылка не испортится: ");
                 String inputTimeToLive = scanner.nextLine();
                 int timeToLive = Integer.parseInt(inputTimeToLive);
                 parcel = new PerishableParcel(data.description, data.weight, data.deliveryAddress, data.sendDay, timeToLive);
+                perishableParcelBox.addParcel((PerishableParcel) parcel);
                 break;
         }
 
@@ -144,7 +156,7 @@ public class DeliveryApp {
     }
 
     public static void sendNotification() {
-        if(trackableParcels.isEmpty()) {
+        if (trackableParcels.isEmpty()) {
             System.out.println("В доставке нет посылок с услугой SMS-оповещения.\n");
             return;
         }
@@ -161,5 +173,44 @@ public class DeliveryApp {
         }
     }
 
-}
+    public static void printBoxContent() {
+        System.out.println("Выберите коробку:");
+        System.out.println("1 — Стандартная");
+        System.out.println("2 — Хрупкая");
+        System.out.println("3 — Скоропортящаяся");
+        String input = scanner.nextLine();
+        if (input.isEmpty()) {
+            System.out.println("Ввод не должен быть пустым.");
+            return;
+        }
 
+        int choice = Integer.parseInt(input);
+        List<? extends Parcel> parcelsInBox;
+        switch (choice) {
+            case 1:
+                parcelsInBox = standardParcelBox.getAllParcels();
+                break;
+            case 2:
+                parcelsInBox = fragileParcelBox.getAllParcels();
+                break;
+            case 3:
+                parcelsInBox = perishableParcelBox.getAllParcels();
+                break;
+            default:
+                System.out.println("Неверный выбор.\n");
+                return;
+        }
+
+        if (parcelsInBox.isEmpty()) {
+            System.out.println("Коробка пуста.\n");
+            return;
+        } else {
+            System.out.println("Содержимое коробки:");
+            for (int i = 0; i < parcelsInBox.size(); i++) {
+                System.out.println("Посылка №" + (i + 1) + ":" + parcelsInBox.get(i).description);
+            }
+        }
+        System.out.println("Конец коробки.\n");
+
+    }
+}
