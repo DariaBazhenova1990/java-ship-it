@@ -87,7 +87,8 @@ public class DeliveryApp {
                 System.out.print("Введите срок в днях, за который посылка не испортится: ");
                 String inputTimeToLive = scanner.nextLine();
                 int timeToLive = Integer.parseInt(inputTimeToLive);
-                parcel = new PerishableParcel(data.description, data.weight, data.deliveryAddress, data.sendDay, timeToLive);
+                parcel = new PerishableParcel(data.description, data.weight, data.deliveryAddress, data.sendDay,
+                        timeToLive);
                 perishableParcelBox.addParcel((PerishableParcel) parcel);
                 break;
         }

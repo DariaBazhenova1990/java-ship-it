@@ -20,7 +20,7 @@ public abstract class Parcel implements Deliverable {
 
     @Override
     public void deliver() {
-        System.out.println("Посылка <<" + description + ">> доставлена по адресу " + deliveryAddress + "");
+        System.out.println("Посылка <<" + description + ">> доставлена по адресу " + deliveryAddress + ".");
     }
 
     @Override
