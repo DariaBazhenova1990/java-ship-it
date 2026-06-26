@@ -14,13 +14,14 @@ public class ParcelBox<T extends Parcel> {
     }
 
     public boolean addParcel(T parcel) {
-        if (currentWeight + parcel.weight < maxWeight) {
+        if (currentWeight + parcel.weight <= maxWeight) {
             parcelsInBox.add(parcel);
             currentWeight += parcel.weight;
             System.out.println("Добавили посылку в коробку.");
             return true;
         } else {
-            System.out.println("Превышен максимальный вес. Посылка не будет добавлена в коробку.");
+            System.out.println("Превышен максимальный вес. Посылка не будет добавлена в коробку. " +
+                    "В коробке осталось свободное место под посылки весом " + (maxWeight - currentWeight) + "кг.");
             return false;
         }
 

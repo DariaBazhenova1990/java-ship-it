@@ -3,39 +3,34 @@ package ru.yandex.practicum.delivery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ParcelBoxTest {
-    static int maxParcelBoxWeight;
-    static int parcelWeight;
-    private static ParcelBox<StandardParcel> standardParcelBox = new ParcelBox<>(maxParcelBoxWeight);
-    private static StandardParcel standardParcel = new StandardParcel("стандартная", parcelWeight,
-            "стандартный адрес", 2);
+    ParcelBox<StandardParcel> standardParcelBox;
+    StandardParcel standardParcel;
 
     @Test
     void shouldAddParcelWhenMaxWeightNotAchived() {
-        maxParcelBoxWeight = 20;
-        parcelWeight = 10;
-        boolean result = maxParcelBoxWeight >= parcelWeight;
-        Assertions.assertEquals(result, standardParcelBox.addParcel(standardParcel),
+        standardParcelBox = new ParcelBox<>(10);
+        standardParcel = new StandardParcel("стандартная", 9,
+                "стандартный адрес", 2);
+        Assertions.assertTrue(standardParcelBox.addParcel(standardParcel),
                 "Посылка ошибочно добавлена в коробку.");
     }
 
     @Test
     void shouldNotAddParcelWhenMaxWeightAchived() {
-        maxParcelBoxWeight = 10;
-        parcelWeight = 20;
-        boolean result = maxParcelBoxWeight >= parcelWeight;
-        Assertions.assertEquals(result, standardParcelBox.addParcel(standardParcel),
+        standardParcelBox = new ParcelBox<>(10);
+        standardParcel = new StandardParcel("стандартная", 11,
+                "стандартный адрес", 2);
+        Assertions.assertFalse(standardParcelBox.addParcel(standardParcel),
                 "Посылка ошибочно не добавлена в коробку.");
     }
 
     @Test
     void shouldAddParcelWhenMaxWeightFitted() {
-        maxParcelBoxWeight = 10;
-        parcelWeight = 10;
-        boolean result = maxParcelBoxWeight >= parcelWeight;
-        Assertions.assertEquals(result, standardParcelBox.addParcel(standardParcel),
+        standardParcelBox = new ParcelBox<>(10);
+        standardParcel = new StandardParcel("стандартная", 10,
+                "стандартный адрес", 2);
+        Assertions.assertTrue(standardParcelBox.addParcel(standardParcel),
                 "Посылка ошибочно добавлена в коробку.");
     }
 

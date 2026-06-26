@@ -2,10 +2,10 @@ package ru.yandex.practicum.delivery;
 
 public interface Deliverable {
 
-    public void packageItem();
+    void packageItem();
 
-    public void deliver();
+    void deliver();
 
-    public int calculateDeliveryCost();
+    int calculateDeliveryCost();
 
 }

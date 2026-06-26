@@ -94,7 +94,7 @@ public class DeliveryApp {
         }
 
         allParcels.add(parcel);
-        System.out.println("Посылка успешно добавлена!\n");
+        System.out.println("Посылка успешно принята в доставку!\n");
 
     }
 
